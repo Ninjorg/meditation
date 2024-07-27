@@ -15,8 +15,9 @@ const newQuoteButton = document.getElementById('new-quote');
 const quoteDisplay = document.getElementById('quote');
 const audio = document.getElementById('audio');
 const timeError = document.getElementById('time-error');
+const streakDisplay = document.getElementById('streak');
 
-// Load session history from local storage
+// Load session history and streak from local storage
 function loadSessionHistory() {
     const history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
     sessionHistoryList.innerHTML = ''; // Clear existing items
@@ -27,8 +28,42 @@ function loadSessionHistory() {
     });
 }
 
+function loadStreak() {
+    const today = new Date().toDateString();
+    const lastMeditationDate = localStorage.getItem('lastMeditationDate');
+    const streak = parseInt(localStorage.getItem('streak'), 10) || 0;
+
+    if (lastMeditationDate === today) {
+        // Today is already counted as a meditation day
+        streakDisplay.textContent = `Current Streak: ${streak} days`;
+    } else if (lastMeditationDate) {
+        // Check if the streak is consecutive
+        const lastDate = new Date(lastMeditationDate);
+        const currentDate = new Date(today);
+        const oneDay = 24 * 60 * 60 * 1000;
+        const diffDays = Math.round((currentDate - lastDate) / oneDay);
+
+        if (diffDays === 1) {
+            // Continue streak
+            localStorage.setItem('streak', streak + 1);
+            streakDisplay.textContent = `Current Streak: ${streak + 1} days`;
+        } else if (diffDays > 1) {
+            // Reset streak if not consecutive
+            localStorage.setItem('streak', 1);
+            streakDisplay.textContent = `Current Streak: 1 day`;
+        }
+    } else {
+        // First meditation day
+        localStorage.setItem('streak', 1);
+        streakDisplay.textContent = `Current Streak: 1 day`;
+    }
+    
+    localStorage.setItem('lastMeditationDate', today);
+}
+
 window.addEventListener('load', () => {
     loadSessionHistory();
+    loadStreak();
 });
 
 startButton.addEventListener('click', () => {
@@ -56,6 +91,7 @@ function startTimer() {
         }
     }, 1000);
 }
+
 function resetTimer() {
     clearInterval(timer);
     isRunning = false;
@@ -78,15 +114,6 @@ function resetTimer() {
     updateTimer();
     updateProgressBar();
 }
-
-function updateTimer() {
-    const remainingTime = totalTime - elapsedTime;
-    const minutes = Math.floor(remainingTime / 60);
-    const seconds = remainingTime % 60;
-    minutesDisplay.textContent = String(minutes).padStart(2, '0');
-    secondsDisplay.textContent = String(seconds).padStart(2, '0');
-}
-
 
 function updateTimer() {
     const remainingTime = totalTime - elapsedTime;
