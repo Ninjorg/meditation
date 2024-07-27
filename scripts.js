@@ -15,6 +15,17 @@ const progressBar = document.getElementById('progress-bar');
 const sessionHistoryList = document.getElementById('session-history');
 const newQuoteButton = document.getElementById('new-quote');
 const quoteDisplay = document.getElementById('quote');
+const audio = document.getElementById('audio');
+
+// Load session history from local storage
+window.addEventListener('load', () => {
+    const history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+    history.forEach(session => {
+        const sessionItem = document.createElement('li');
+        sessionItem.textContent = session;
+        sessionHistoryList.appendChild(sessionItem);
+    });
+});
 
 startButton.addEventListener('click', () => {
     if (!isRunning) {
@@ -45,10 +56,13 @@ function startTimer() {
 function resetTimer() {
     clearInterval(timer);
     isRunning = false;
-    totalTime = customTimeInput.value * 60;
+    const customTime = parseInt(customTimeInput.value, 10);
+    if (isNaN(customTime) || customTime < 1 || customTime > 60) {
+        alert('Please enter a valid time between 1 and 60 minutes.');
+        return;
+    }
+    totalTime = customTime * 60;
     elapsedTime = 0;
-    minutes = Math.floor(totalTime / 60);
-    seconds = totalTime % 60;
     updateTimer();
     updateProgressBar();
 }
@@ -89,7 +103,26 @@ newQuoteButton.addEventListener('click', () => {
 function addSessionToHistory() {
     const sessionDuration = `${Math.floor(totalTime / 60)}:${totalTime % 60 < 10 ? '0' : ''}${totalTime % 60}`;
     const sessionDateTime = new Date().toLocaleString();
-    const sessionItem = document.createElement('li');
-    sessionItem.textContent = `Session at ${sessionDateTime}, Duration: ${sessionDuration}`;
-    sessionHistoryList.prepend(sessionItem);
+    const sessionItem = `Session at ${sessionDateTime}, Duration: ${sessionDuration}`;
+    const listItem = document.createElement('li');
+    listItem.textContent = sessionItem;
+    sessionHistoryList.prepend(listItem);
+
+    // Save to local storage
+    const history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+    history.unshift(sessionItem);
+    localStorage.setItem('sessionHistory', JSON.stringify(history));
 }
+
+// Audio functionality
+audio.addEventListener('play', () => {
+    if (isRunning) {
+        audio.play();
+    }
+});
+
+audio.addEventListener('pause', () => {
+    if (isRunning) {
+        audio.pause();
+    }
+});
