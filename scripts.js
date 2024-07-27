@@ -56,21 +56,37 @@ function startTimer() {
         }
     }, 1000);
 }
-
 function resetTimer() {
     clearInterval(timer);
     isRunning = false;
+    
+    // Get custom time value from input
     const customTime = parseInt(customTimeInput.value, 10);
+    
+    // Validate custom time input
     if (isNaN(customTime) || customTime < 1 || customTime > 60) {
+        timeError.textContent = 'Please enter a valid time between 1 and 60 minutes.';
         timeError.style.display = 'block';
         return;
     }
+    
     timeError.style.display = 'none'; // Hide error if input is valid
+    
+    // Set total time based on custom time
     totalTime = customTime * 60;
     elapsedTime = 0;
     updateTimer();
     updateProgressBar();
 }
+
+function updateTimer() {
+    const remainingTime = totalTime - elapsedTime;
+    const minutes = Math.floor(remainingTime / 60);
+    const seconds = remainingTime % 60;
+    minutesDisplay.textContent = String(minutes).padStart(2, '0');
+    secondsDisplay.textContent = String(seconds).padStart(2, '0');
+}
+
 
 function updateTimer() {
     const remainingTime = totalTime - elapsedTime;
