@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindfulness and Meditation App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mindfulness and Meditation</h1>
+        </header>
+        <main>
+            <section class="timer-section">
+                <h2>Meditation Timer</h2>
+                <div class="timer">
+                    <div id="progress-bar"></div>
+                    <span id="minutes">05</span>:<span id="seconds">00</span>
+                </div>
+                <label for="custom-time">Custom Time (minutes):</label>
+                <input type="number" id="custom-time" min="1" max="60" step="1" value="5">
+                <button id="start">Start</button>
+                <button id="reset">Reset</button>
+            </section>
+            <section class="audio-section">
+                <h2>Guided Meditation</h2>
+                <audio controls id="audio">
+                    <source src="meditation.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </section>
+            <section class="quotes-section">
+                <h2>Mindfulness Quotes</h2>
+                <p id="quote">"Mindfulness is a way of befriending ourselves and our experience." - Jon Kabat-Zinn</p>
+                <button id="new-quote">New Quote</button>
+            </section>
+            <section class="history-section">
+                <h2>Session History</h2>
+                <ul id="session-history"></ul>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 Mindfulness and Meditation</p>
+        </footer>
+    </div>
+    <script src="scripts.js"></script>
+</body>
+</html>
