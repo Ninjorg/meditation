@@ -111,3 +111,9 @@ footer {
         opacity: 1;
     }
 }
+
+/* New styles */
+#time-error {
+    font-size: 0.9em;
+    margin-top: 5px;
+}
