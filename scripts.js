@@ -3,8 +3,6 @@ let timer;
 let isRunning = false;
 let totalTime = 5 * 60; // Initial time in seconds (5 minutes)
 let elapsedTime = 0;
-let minutes = Math.floor(totalTime / 60);
-let seconds = totalTime % 60;
 
 const startButton = document.getElementById('start');
 const resetButton = document.getElementById('reset');
@@ -16,15 +14,21 @@ const sessionHistoryList = document.getElementById('session-history');
 const newQuoteButton = document.getElementById('new-quote');
 const quoteDisplay = document.getElementById('quote');
 const audio = document.getElementById('audio');
+const timeError = document.getElementById('time-error');
 
 // Load session history from local storage
-window.addEventListener('load', () => {
+function loadSessionHistory() {
     const history = JSON.parse(localStorage.getItem('sessionHistory')) || [];
+    sessionHistoryList.innerHTML = ''; // Clear existing items
     history.forEach(session => {
         const sessionItem = document.createElement('li');
         sessionItem.textContent = session;
         sessionHistoryList.appendChild(sessionItem);
     });
+}
+
+window.addEventListener('load', () => {
+    loadSessionHistory();
 });
 
 startButton.addEventListener('click', () => {
@@ -58,9 +62,10 @@ function resetTimer() {
     isRunning = false;
     const customTime = parseInt(customTimeInput.value, 10);
     if (isNaN(customTime) || customTime < 1 || customTime > 60) {
-        alert('Please enter a valid time between 1 and 60 minutes.');
+        timeError.style.display = 'block';
         return;
     }
+    timeError.style.display = 'none'; // Hide error if input is valid
     totalTime = customTime * 60;
     elapsedTime = 0;
     updateTimer();
@@ -68,8 +73,9 @@ function resetTimer() {
 }
 
 function updateTimer() {
-    minutes = Math.floor((totalTime - elapsedTime) / 60);
-    seconds = (totalTime - elapsedTime) % 60;
+    const remainingTime = totalTime - elapsedTime;
+    const minutes = Math.floor(remainingTime / 60);
+    const seconds = remainingTime % 60;
     minutesDisplay.textContent = String(minutes).padStart(2, '0');
     secondsDisplay.textContent = String(seconds).padStart(2, '0');
 }
